@@ -1,99 +1,99 @@
-import React, { Component } from "react";
-import axios from "axios";
-import { Link, withRouter } from "react-router-dom";
-import Modal from "react-modal";
-import Markdown from "react-markdown";
+import React, { Component } from "react"
+import axios from "axios"
+import { Link, withRouter } from "react-router-dom"
+import Modal from "react-modal"
+import Markdown from "react-markdown"
 
-const api = "https://adamsnotes.herokuapp.com/api/notes/";
+const api = "https://adamsnotes.herokuapp.com/api/notes/"
 class Note extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      note: null,
-      showModal: false
-    };
-  }
-
-  componentDidMount() {
-    const id = this.props.match.params.id;
-    this.fetchNote(id);
-  }
-
-  fetchNote = id => {
-    const token = localStorage.getItem("jwt");
-    const options = {
-      headers: {
-        Authorization: token
-      }
-    };
-    axios
-      .get(`${api}${id}`, options)
-      .then(res => {
-        this.setState({ note: res.data[0] });
-      })
-      .catch(res => console.log(res));
-  };
-
-  openModal = () => {
-    this.setState({ showModal: true });
-  };
-
-  closeModal = () => {
-    this.setState({ showModal: false });
-  };
-
-  deleteNoteHelper = e => {
-    e.preventDefault(e);
-    this.props.deleteNote(e, this.state.note.id);
-    this.props.history.push("/");
-  };
-
-  render() {
-    if (!this.state.note) {
-      return <div>loading note</div>;
+    constructor(props) {
+        super(props)
+        this.state = {
+            note: null,
+            showModal: false
+        }
     }
-    const { noteTitle, noteBody, id } = this.state.note;
-    return (
-      <div>
-        <div className="edit-delete-container">
-          <Link className="rr-link" to={`/edit/${id}`}>
-            <p className="edit-note-link">edit</p>
-          </Link>
-          <p className="delete-note-link" onClick={this.openModal}>
-            delete
-          </p>
-        </div>
-        <div>
-          <h3>{noteTitle}</h3>
-          <Markdown>{noteBody}</Markdown>
-        </div>
-        <div>
-          <Modal
-            isOpen={this.state.showModal}
-            onRequestClose={this.closeModal}
-            contentLabel="Are you sure you want to delete?"
-            className="modal"
-          >
-            <div className="modal">
-              <div className="modal-prompt">
-                <p>Are you sure you want to delete this?</p>
-              </div>
-              <div className="modal-button-container">
-                <Link className="rr-link" to="/">
-                  <div className="modal-delete-button" onClick={this.deleteNoteHelper}>
-                    Delete
-                  </div>
-                </Link>
-                <div className="modal-no-button" onClick={this.closeModal}>
-                  No
+
+    componentDidMount() {
+        const id = this.props.match.params.id
+        this.fetchNote(id)
+    }
+
+    fetchNote = id => {
+        const token = localStorage.getItem("jwt")
+        const options = {
+            headers: {
+                Authorization: token
+            }
+        }
+        axios
+            .get(`${api}${id}`, options)
+            .then(res => {
+                this.setState({ note: res.data[0] })
+            })
+            .catch(res => console.log(res))
+    }
+
+    openModal = () => {
+        this.setState({ showModal: true })
+    }
+
+    closeModal = () => {
+        this.setState({ showModal: false })
+    }
+
+    deleteNoteHelper = e => {
+        e.preventDefault(e)
+        this.props.deleteNote(e, this.state.note.id)
+        this.props.history.push("/")
+    }
+
+    render() {
+        if (!this.state.note) {
+            return <div>loading note</div>
+        }
+        const { noteTitle, noteBody, id } = this.state.note
+        return (
+            <div>
+                <div className="edit-delete-container">
+                    <Link className="rr-link" to={`/edit/${id}`}>
+                        <p className="edit-note-link">edit</p>
+                    </Link>
+                    <p className="delete-note-link" onClick={this.openModal}>
+                        delete
+                    </p>
                 </div>
-              </div>
+                <div>
+                    <h3>{noteTitle}</h3>
+                    <Markdown>{noteBody}</Markdown>
+                </div>
+                <div className="modal-container">
+                    <Modal
+                        isOpen={this.state.showModal}
+                        onRequestClose={this.closeModal}
+                        contentLabel="Are you sure you want to delete?"
+                        className="modal"
+                    >
+                        <div className="modal">
+                            <div className="modal-prompt">
+                                <p>Are you sure you want to delete this?</p>
+                            </div>
+                            <div className="modal-button-container">
+                                <Link className="rr-link" to="/">
+                                    <div className="modal-delete-button" onClick={this.deleteNoteHelper}>
+                                        Delete
+                                    </div>
+                                </Link>
+                                <div className="modal-no-button" onClick={this.closeModal}>
+                                    No
+                                </div>
+                            </div>
+                        </div>
+                    </Modal>
+                </div>
             </div>
-          </Modal>
-        </div>
-      </div>
-    );
-  }
+        )
+    }
 }
 
-export default withRouter(Note);
+export default withRouter(Note)
